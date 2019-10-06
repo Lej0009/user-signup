@@ -1,10 +1,10 @@
-{% extends "base.html" %} {% block content %} {% if watchlist|length != 0 %}
+{% extends "base.html" %} {% block content %}
 
 <h1>Signup</h1>
 
 <form action="/a" method="post">
-    Username<input type="text" name="username" /> Password
-    <input type="text" name="password" /> Verify Password<input type="text" name="verify-pw" /> Email (optional)<input type="text" name="email" />
+    Username<input type="text" name="username" /><br> Password
+    <input type="text" name="password" /><br> Verify Password<input type="text" name="verify-pw" /><br> Email (optional)<input type="text" name="email" /><br>
     <input type="submit"></input>
 </form>
 
