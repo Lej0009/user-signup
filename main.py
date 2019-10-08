@@ -6,6 +6,28 @@ import jinja2
 app = Flask(__name__)
 app.config['DEBUG'] = True
 
+# look inside the request to figure out what the user typed
+username = request.form['username']
+password = request.form['password']
+verify_password = request.form['verify-password']
+email = request.form['email']
+
+def validate_username():
+    #username must be between 3 and 20 characters
+    if 3 < len(username) < 20:
+        return True
+    else:
+        return False
+
+
+
+@app.route("/")
+def index():
+    return render_template('base.html')
+
+app.run()
+
+
 
 # app.route("/", methods=['POST'])
 # def verify():
@@ -50,8 +72,3 @@ app.config['DEBUG'] = True
 #     else:
 #         return render_template('base.html', username_error, password_error, verify_password_error, password_match_error)
 
-@app.route("/")
-def index():
-    return render_template('base.html')
-
-app.run()
