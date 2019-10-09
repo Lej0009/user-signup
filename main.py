@@ -18,17 +18,18 @@ app.config['DEBUG'] = True
 # email_error = ''
 
 
-def username_error():
-    username_error = ''
-    username = request.form['username']
-    #username must be between 3 and 20 characters
+def username_error(username):
+
     if 3 < len(username) < 20:
-        return True
+        return False
     else:
-        username_error = "Please specify a username that is between 3 and 20 characters and contains no spaces."
-        username = ''
-        return form.format(username_error=username_error)
-        # return render_template('base.html', username_error = username_error)
+        return True
+
+def password_error(password, verify_password):
+    if 3 < len(password) < 20 or 3<len(verify_password)<20:
+        return False
+    else:
+
 
 
 
@@ -36,16 +37,23 @@ def username_error():
 def index():
     return render_template('base.html')
 
-@app.route("/welcome")
+@app.route("/signup", methods=['POST'])
 def validate():
     username = request.form['username']
-    if not username_error():
-        return render_template('welcome.html'.format(username))
+    password = request.form['password']
+    verify_password = request.form['verify']
+    email = request.form['email']
 
-@app.route("/welcome", methods=['POST'])
-def welcome_message():
-   username = request.args.get('username')
-   return render_template('welcome.html'.format(username))
+    error = ''
+
+    if not username_error(username):
+        return render_template('welcome.html', username=username)
+    else:
+        error = "Please specify a username that is between 3 and 20 characters and contains no spaces."
+        username = ''
+        return render_template('base.html',username_error = error)
+        
+        
 
 app.run()
 
