@@ -30,10 +30,17 @@ def username_error(username):
     else:
         return True
 
-# def password_error(password, verify_password):
-#     if 3 < len(password) < 20 or 3<len(verify_password)<20:
-#         return False
-#     else:
+def password_error(password, verify_password):
+    space = False
+    for char in password:
+        for char2 in verify_password:
+            if char.isspace() == True:
+                space = True
+    
+    if 3 < len(password) < 20 and 3<len(verify_password)<20 and space == False:
+        return False
+    else:
+        return True
 
 
 @app.route("/")
@@ -56,6 +63,15 @@ def validate():
         username = ''
         return render_template('base.html',username_error = error)
 
+    if not password_error(password, verify_password):
+        return render_template('welcome.html', password=password, verify_password = password)
+    else:
+        error = "Please specify a password that is between 3 and 20 characters and contains no spaces."
+
+    if password == verify_password:
+        return render_template('welcome.html', password=password, verify_password=verify_password)
+    else:
+        error = "Passwords do not match."
         
 
 app.run()
