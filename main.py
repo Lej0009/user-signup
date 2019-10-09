@@ -19,18 +19,21 @@ app.config['DEBUG'] = True
 
 
 def username_error(username):
+    space = False
+    for char in username:
+        if char.isspace() == True:
+            space = True
+    
 
-    if 3 < len(username) < 20:
+    if 3 < len(username) < 20 and space == False :
         return False
     else:
         return True
 
-def password_error(password, verify_password):
-    if 3 < len(password) < 20 or 3<len(verify_password)<20:
-        return False
-    else:
-
-
+# def password_error(password, verify_password):
+#     if 3 < len(password) < 20 or 3<len(verify_password)<20:
+#         return False
+#     else:
 
 
 @app.route("/")
@@ -52,7 +55,7 @@ def validate():
         error = "Please specify a username that is between 3 and 20 characters and contains no spaces."
         username = ''
         return render_template('base.html',username_error = error)
-        
+
         
 
 app.run()
