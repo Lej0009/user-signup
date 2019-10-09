@@ -7,23 +7,36 @@ app = Flask(__name__)
 app.config['DEBUG'] = True
 
 # look inside the request to figure out what the user typed
-username = request.form['username']
-password = request.form['password']
-verify_password = request.form['verify-password']
-email = request.form['email']
+# username = request.form['username']
+# password = request.form['password']
+# verify_password = request.form['verify-password']
+# email = request.form['email']
 
-def validate_username():
+username_error = ''
+password_error = ''
+verify_password_error = ''
+email_error = ''
+
+def validate_username(username):
     #username must be between 3 and 20 characters
+    if (not username) or (username.strip() == ""):
+        username_error = "Please specify a username."
+    
     if 3 < len(username) < 20:
         return True
     else:
-        return False
+        return username_error = "Please specify a username that is between 3 and 20 characters and contains no spaces."
 
 
 
 @app.route("/")
 def index():
     return render_template('base.html')
+
+@app.route("/welcome", methods=['POST'])
+def welcome_message():
+   username = request.form['username']
+   return render_template('welcome.html', username=username)
 
 app.run()
 
