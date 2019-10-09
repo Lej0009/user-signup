@@ -1,7 +1,7 @@
 from flask import Flask, render_template, request, redirect
 import cgi
 import os
-import jinja2
+
 
 app = Flask(__name__)
 app.config['DEBUG'] = True
@@ -12,20 +12,23 @@ app.config['DEBUG'] = True
 # verify_password = request.form['verify-password']
 # email = request.form['email']
 
-username_error = ''
-password_error = ''
-verify_password_error = ''
-email_error = ''
 
-def validate_username(username):
+# password_error = ''
+# verify_password_error = ''
+# email_error = ''
+
+
+def username_error():
+    username_error = ''
+    username = request.form['username']
     #username must be between 3 and 20 characters
-    if (not username) or (username.strip() == ""):
-        username_error = "Please specify a username."
-    
     if 3 < len(username) < 20:
         return True
     else:
-        return username_error = "Please specify a username that is between 3 and 20 characters and contains no spaces."
+        username_error = "Please specify a username that is between 3 and 20 characters and contains no spaces."
+        username = ''
+        return form.format(username_error=username_error)
+        # return render_template('base.html', username_error = username_error)
 
 
 
@@ -33,10 +36,16 @@ def validate_username(username):
 def index():
     return render_template('base.html')
 
+@app.route("/welcome")
+def validate():
+    username = request.form['username']
+    if not username_error():
+        return render_template('welcome.html'.format(username))
+
 @app.route("/welcome", methods=['POST'])
 def welcome_message():
-   username = request.form['username']
-   return render_template('welcome.html', username=username)
+   username = request.args.get('username')
+   return render_template('welcome.html'.format(username))
 
 app.run()
 
