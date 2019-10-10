@@ -25,19 +25,30 @@ def username_error(username):
             space = True
     
 
-    if 3 < len(username) < 20 and space == False :
+    if 2 < len(username) < 20 and space == False :
         return False
     else:
         return True
 
-def password_error(password, verify_password):
+def password_error(password):
     space = False
     for char in password:
-        for char2 in verify_password:
-            if char.isspace() == True:
-                space = True
+        if char.isspace() == True:
+            space = True
     
-    if 3 < len(password) < 20 and 3<len(verify_password)<20 and space == False:
+    if 2<len(password)<20 and space == False:
+        return False
+    else:
+        return True
+
+def verify_error(verify, password):
+    if verify == password:
+        return False
+    else:
+        return True
+
+def email_error(email):
+    if "@" in email and "." in email and " " not in email and 2<len(email)<20:
         return False
     else:
         return True
@@ -45,68 +56,44 @@ def password_error(password, verify_password):
 
 @app.route("/")
 def index():
-    return render_template('base.html')
+    return render_template('base.html', username='', username_error='', password='', password_error='', verify='', verify_password_error='')
 
 @app.route("/signup", methods=['POST'])
 def validate():
     username = request.form['username']
     password = request.form['password']
-    verify_password = request.form['verify']
+    verify = request.form['verify']
     email = request.form['email']
 
     error = ''
-
-    if not username_error(username):
+  
+    if not username_error(username) and not password_error(password) and not verify_error(verify, password) and not email_error(email):
         return render_template('welcome.html', username=username)
-    else:
+
+    
+    if username_error(username):
         error = "Please specify a username that is between 3 and 20 characters and contains no spaces."
         username = ''
         return render_template('base.html',username_error = error)
 
-    if not password_error(password, verify_password):
-        return render_template('welcome.html', password=password, verify_password = password)
-    else:
+    if password_error(password):
         error = "Please specify a password that is between 3 and 20 characters and contains no spaces."
+        password = ''
+        return render_template('base.html', password_error = error)
 
-    if password == verify_password:
-        return render_template('welcome.html', password=password, verify_password=verify_password)
-    else:
+    if verify_error(verify, password):
         error = "Passwords do not match."
-        
+        return render_template('base.html', password_error=error, verify_password_error=error)
+
+    if email_error(email):
+        error = "Please specify a valid email."
+        email = ''
+        return render_template('base.html', email_error=error)
+
+       
 
 app.run()
 
-
-
-# app.route("/", methods=['POST'])
-# def verify():
-#     # look inside the request to figure out what the user typed
-#     username = request.form['username']
-#     password = request.form['password']
-#     verify_password = request.form['verify-password']
-#     email = request.form['email']
-
-#     username_error = ''
-#     password_error = ''
-#     verify_password_error = ''
-#     email_error = ''
-
-#     # if the user typed nothing at all, redirect and tell them the error
-#     if (not username) or (username.strip() == ""):
-#         username_error = "Please specify a username."
-
-
-#     if (not password) or (password.strip() == ""):
-#         password_error = "Please specify a password."
-#         # return redirect("/?error=" + error)
-
-#     if (not verify_password) or (verify_password.strip() == ""):
-#         verify_password_error = "Please verify password."
-#         # return redirect("/?error=" + error)
-
-#     if password != verify_password:
-#         password_match_error = "Passwords do not match."
-#         # return redirect("/?error=" + error)
 
 
 #     # 'escape' the user's input so that if they typed HTML, it doesn't mess up our site
@@ -116,8 +103,4 @@ app.run()
 #     email_escaped = cgi.escape(email, quote=True)
 
 
-#     if not username_error and not password_error and not verify_password_error and not email_error:
-#         #success message
-#     else:
-#         return render_template('base.html', username_error, password_error, verify_password_error, password_match_error)
 
