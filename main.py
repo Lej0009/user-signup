@@ -6,16 +6,6 @@ import os
 app = Flask(__name__)
 app.config['DEBUG'] = True
 
-# look inside the request to figure out what the user typed
-# username = request.form['username']
-# password = request.form['password']
-# verify_password = request.form['verify-password']
-# email = request.form['email']
-
-
-# password_error = ''
-# verify_password_error = ''
-# email_error = ''
 
 
 def username_error(username):
@@ -48,7 +38,7 @@ def verify_error(verify, password):
         return True
 
 def email_error(email):
-    if "@" in email and "." in email and " " not in email and 2<len(email)<20:
+    if "@" in email and "." in email and " " not in email and 2<len(email)<20 and email.count('@') == 1:
         return False
     else:
         return True
@@ -56,51 +46,53 @@ def email_error(email):
 
 @app.route("/")
 def index():
-    return render_template('base.html', username='', username_error='', password='', password_error='', verify='', verify_password_error='')
+    return render_template('base.html', username='', username_error='', password='', password_error='', verify='', verify_password_error='', email='', email_error='')
 
 @app.route("/signup", methods=['POST'])
 def validate():
+
     username = request.form['username']
     password = request.form['password']
     verify = request.form['verify']
     email = request.form['email']
 
-    error = ''
-  
-    if not username_error(username) and not password_error(password) and not verify_error(verify, password) and not email_error(email):
-        return render_template('welcome.html', username=username)
+    un_error = ''
+    pw_error = ''
+    v_error = ''
+    e_error = ''
 
-    
+    # 'escape' the user's input so that if they typed HTML, it doesn'
+    username_escaped = cgi.escape(username, quote=True)
+    password_escaped = cgi.escape(password, quote=True)
+    verify_escaped = cgi.escape(verify, quote=True)
+    email_escaped = cgi.escape(email, quote=True)
+
+         
     if username_error(username):
-        error = "Please specify a username that is between 3 and 20 characters and contains no spaces."
+        un_error = "Please specify a username that is between 3 and 20 characters and contains no spaces."
         username = ''
-        return render_template('base.html',username_error = error)
 
     if password_error(password):
-        error = "Please specify a password that is between 3 and 20 characters and contains no spaces."
+        pw_error = "Please specify a password that is between 3 and 20 characters and contains no spaces."
         password = ''
-        return render_template('base.html', password_error = error)
 
     if verify_error(verify, password):
-        error = "Passwords do not match."
-        return render_template('base.html', password_error=error, verify_password_error=error)
+        v_error = "Passwords do not match."
 
     if email_error(email):
-        error = "Please specify a valid email."
+        e_error = "Please specify a valid email."
         email = ''
-        return render_template('base.html', email_error=error)
+
+    if not username_error(username) and not password_error(password) and not verify_error(verify, password) and not email_error(email):
+        return render_template('welcome.html', username=username)
+    else:
+        return render_template('base.html', username=username, username_error=un_error, password_error=pw_error, verify_password_error=v_error, email=email, email_error=e_error)
+        
 
        
 
 app.run()
 
-
-
-#     # 'escape' the user's input so that if they typed HTML, it doesn't mess up our site
-#     username_escaped = cgi.escape(username, quote=True)
-#     password_escaped = cgi.escape(password, quote=True)
-#     verify_password_escaped = cgi.escape(verify_password, quote=True)
-#     email_escaped = cgi.escape(email, quote=True)
 
 
 
